@@ -3,20 +3,24 @@ import yt_dlp
 import os
 from datetime import datetime
 
-st.set_page_config(page_title="AKP YTDL", page_icon="🎬")
+st.set_page_config(page_title="YouTube Downloader", page_icon="🎬")
 st.title("🎬 YTDL BY AKP (MP4 & MP3)")
 
 url = st.text_input("🔗 Enter YouTube URL:")
 format_choice = st.radio("🎞️ Choose format:", ["MP4 (Video)", "MP3 (Audio)"])
 download_button = st.button("Download")
 
-# Initialize log
 if "download_log" not in st.session_state:
     st.session_state.download_log = []
 
-# Function to preview video info
 def get_video_info(url):
-    ydl_opts = {'quiet': True, 'skip_download': True}
+    ydl_opts = {
+        'quiet': True,
+        'skip_download': True,
+        'http_headers': {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
+        }
+    }
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=False)
     return {
@@ -27,16 +31,19 @@ def get_video_info(url):
         'webpage_url': info.get('webpage_url')
     }
 
-# Function to download video/audio
 def download_video(url, is_audio):
     ydl_opts = {
         'outtmpl': 'download.%(ext)s',
-        'quiet': True
+        'quiet': True,
+        'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best',
+        'http_headers': {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
+        }
     }
 
     if is_audio:
         ydl_opts.update({
-            'format': 'bestaudio/best',
+            'format': 'bestaudio[ext=m4a]/bestaudio',
             'postprocessors': [{
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'mp3',
@@ -46,7 +53,6 @@ def download_video(url, is_audio):
         filename = 'download.mp3'
         mime = 'audio/mpeg'
     else:
-        ydl_opts.update({'format': 'best'})
         filename = 'download.mp4'
         mime = 'video/mp4'
 
@@ -73,7 +79,7 @@ if url:
 if url and download_button:
     try:
         is_audio = (format_choice == "MP3 (Audio)")
-        st.info("⏳ Processing download...")
+        st.info("⏳ Downloading...")
         filename, mime = download_video(url, is_audio)
 
         with open(filename, "rb") as f:
@@ -84,7 +90,6 @@ if url and download_button:
                 mime=mime
             )
 
-        # Log the download
         st.session_state.download_log.append({
             "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "url": url,
