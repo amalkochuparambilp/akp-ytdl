@@ -2,8 +2,8 @@ import streamlit as st
 import yt_dlp
 import os
 
-st.set_page_config(page_title="YouTube Downloader", page_icon="🎬")
-st.title("🎬 YouTube Downloader (MP4 & MP3)")
+st.set_page_config(page_title="AKP YTDL", page_icon="🎬")
+st.title("🎬 YTDL BY AKP (MP4 & MP3)")
 
 url = st.text_input("🔗 Enter YouTube URL:")
 format_choice = st.radio("Choose format:", ["MP4 (Video)", "MP3 (Audio)"])
