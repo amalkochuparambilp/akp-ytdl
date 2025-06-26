@@ -1,16 +1,14 @@
 import streamlit as st
 from pytube import YouTube
 import os
-from moviepy.editor import AudioFileClip
+from pydub import AudioSegment
 
-st.set_page_config(page_title="AKP.ytdl", page_icon="🎬")
+st.set_page_config(page_title="AKP YTDL", page_icon="🎬")
 
-st.title("🎬 Ydl By AKP")
+st.title("🎬 YTDL BY AKP")
 st.markdown("Download **MP4** (Video) or **MP3** (Audio) from any YouTube link.")
 
-# Input
 url = st.text_input("🔗 Enter YouTube URL:")
-
 format_choice = st.radio("Choose format:", ["MP4 (Video)", "MP3 (Audio)"])
 download_button = st.button("Download")
 
@@ -20,7 +18,6 @@ if url and download_button:
         title = yt.title
         st.success(f"Video Title: {title}")
 
-        # For MP4
         if format_choice == "MP4 (Video)":
             stream = yt.streams.filter(progressive=True, file_extension="mp4").order_by("resolution").desc().first()
             if stream:
@@ -32,16 +29,17 @@ if url and download_button:
             else:
                 st.error("No MP4 stream available.")
 
-        # For MP3
         elif format_choice == "MP3 (Audio)":
             st.info("Downloading and converting to MP3...")
             audio_stream = yt.streams.filter(only_audio=True).first()
             audio_stream.download(filename="audio.mp4")
-            audioclip = AudioFileClip("audio.mp4")
-            audioclip.write_audiofile("audio.mp3")
-            audioclip.close()
+
+            audio = AudioSegment.from_file("audio.mp4", format="mp4")
+            audio.export("audio.mp3", format="mp3")
+
             with open("audio.mp3", "rb") as f:
                 st.download_button("🎧 Download MP3", f, file_name=f"{title}.mp3", mime="audio/mpeg")
+
             os.remove("audio.mp4")
             os.remove("audio.mp3")
 
