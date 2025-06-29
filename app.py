@@ -10,4 +10,4 @@ if st.button("🎬 YouTube Downloader"):
     st.switch_page("1_Home")
 
 if st.button("📸 Instagram Reels Downloader"):
-    st.switch_page("Instagram")
+    st.switch_page("pages/Instagram")
