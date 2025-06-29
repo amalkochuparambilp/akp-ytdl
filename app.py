@@ -1,6 +1,13 @@
 import streamlit as st
 
-st.set_page_config(page_title="AKP Downloader", page_icon="🌀")
+st.set_page_config(
+    page_title="My Cool App",
+    page_icon="📥",
+    layout="centered",
+    initial_sidebar_state="auto",
+)
+
+st.title("Welcome to My Cool App!")
 
 st.title("🌀 Welcome to AKP Downloader")
 st.markdown("Choose a downloader:")
